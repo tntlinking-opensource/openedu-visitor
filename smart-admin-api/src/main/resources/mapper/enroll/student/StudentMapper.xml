@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.enroll.student.dao.StudentDao">
+
+    <resultMap id="StudentVO" type="net.lab1024.smartadmin.module.enroll.student.domain.vo.StudentVO"></resultMap>
+    <resultMap id="StudentExcelVO" type="net.lab1024.smartadmin.module.enroll.student.domain.vo.StudentExcelVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="StudentVO">
+        select
+        es.id,
+        es.name,
+        es.gender,
+        es.birthday,
+        es.nation,
+        es.koseki,
+        es.address,
+        es.plotId,
+        es.household_head,
+        es.relation,
+        es.premises_permit_code,
+        es.kindergarten,
+        es.id_card,
+        es.feature,
+        es.remark,
+        es.name_father,
+        es.work_unit_father,
+        es.work_address_father,
+        es.work_telephone_father,
+        es.home_phone_father,
+        es.phone_father,
+        es.name_mather,
+        es.work_unit_mather,
+        es.work_address_mather,
+        es.work_telephone_mather,
+        es.home_phone_mather,
+        es.phone_mather,
+        es.create_time,
+        es.update_time,
+        ep.name plotName,
+        ec.name communityName
+        from e_student es
+        left join e_plot ep on es.plotId = ep.id
+        left join e_community ec on ep.community_id = ec.id
+        <where>
+            <if test="queryDTO.id != null">
+                AND es.id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(es.name,#{queryDTO.name})
+            </if>
+            <if test="queryDTO.gender != null ">
+                AND es.gender = #{queryDTO.gender}
+            </if>
+            <if test="queryDTO.idCard != null and queryDTO.idCard != ''">
+                AND INSTR(es.id_card,#{queryDTO.idCard})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND es.create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND es.create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND es.update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND es.update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+            <if test="queryDTO.plot != null and queryDTO.plot != ''">
+                AND (INSTR(ep.name,#{queryDTO.plot}) or INSTR(ec.name,#{queryDTO.plot}))
+            </if>
+            <if test="queryDTO.parentName != null and queryDTO.parentName != ''">
+                AND (INSTR(es.name_father,#{queryDTO.parentName}) or INSTR(es.name_mather,#{queryDTO.parentName}))
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExportData" resultMap="StudentVO">
+        select
+        es.id,
+        es.name,
+        es.gender,
+        es.birthday,
+        es.nation,
+        es.koseki,
+        es.address,
+        es.plotId,
+        es.household_head,
+        es.relation,
+        es.premises_permit_code,
+        es.kindergarten,
+        es.id_card,
+        es.feature,
+        es.remark,
+        es.name_father,
+        es.work_unit_father,
+        es.work_address_father,
+        es.work_telephone_father,
+        es.home_phone_father,
+        es.phone_father,
+        es.name_mather,
+        es.work_unit_mather,
+        es.work_address_mather,
+        es.work_telephone_mather,
+        es.home_phone_mather,
+        es.phone_mather,
+        es.create_time,
+        es.update_time,
+        ep.name plotName,
+        ec.name communityName
+        from e_student es
+        left join e_plot ep on es.plotId = ep.id
+        left join e_community ec on ep.community_id = ec.id
+        <where>
+            <if test="queryDTO.id != null">
+                AND es.id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(es.name,#{queryDTO.name})
+            </if>
+            <if test="queryDTO.gender != null ">
+                AND es.gender = #{queryDTO.gender}
+            </if>
+            <if test="queryDTO.idCard != null and queryDTO.idCard != ''">
+                AND INSTR(es.id_card,#{queryDTO.idCard})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND es.create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND es.create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND es.update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND es.update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+            <if test="queryDTO.plot != null and queryDTO.plot != ''">
+                AND (INSTR(ep.name,#{queryDTO.plot}) or INSTR(ec.name,#{queryDTO.plot}))
+            </if>
+            <if test="queryDTO.parentName != null and queryDTO.parentName != ''">
+                AND (INSTR(es.name_father,#{queryDTO.parentName}) or INSTR(es.name_mather,#{queryDTO.parentName}))
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="StudentExcelVO">
+        select
+         *
+        from e_student
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from e_student where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from e_student where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getByIdCard" resultMap="StudentVO">
+        select
+        id,
+        name,
+        gender,
+        birthday,
+        nation,
+        koseki,
+        address,
+        plotId,
+        household_head,
+        relation,
+        premises_permit_code,
+        kindergarten,
+        id_card,
+        feature,
+        remark,
+        name_father,
+        work_unit_father,
+        work_address_father,
+        work_telephone_father,
+        home_phone_father,
+        phone_father,
+        name_mather,
+        work_unit_mather,
+        work_address_mather,
+        work_telephone_mather,
+        home_phone_mather,
+        phone_mather,
+        create_time,
+        update_time
+        from e_student
+        where id_card = #{idCard}
+
+    </select>
+
+</mapper>

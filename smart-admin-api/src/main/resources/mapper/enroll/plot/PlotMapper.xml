@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.enroll.plot.dao.PlotDao">
+
+    <resultMap id="PlotVO" type="net.lab1024.smartadmin.module.enroll.plot.domain.vo.PlotVO"></resultMap>
+    <resultMap id="PlotExcelVO" type="net.lab1024.smartadmin.module.enroll.plot.domain.vo.PlotExcelVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="PlotVO">
+        select
+            ep.id,
+            ep.community_id,
+            ec.name communityName,
+            ep.name,
+            ep.remark,
+            ep.create_time,
+            ep.update_time
+        from e_plot ep
+        left join e_community ec on ep.community_id = ec.id
+        <where>
+            <if test="queryDTO.id != null">
+                AND ep.id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.communityId != null">
+                AND ep.community_id = #{queryDTO.communityId}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(ep.name,#{queryDTO.name})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND ep.create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND ep.create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND ep.update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND ep.update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExportData" resultMap="PlotExcelVO">
+        select
+           id,
+           community_id,
+           name,
+           remark,
+           create_time,
+           update_time
+        from e_plot
+        <where>
+            <if test="queryDTO.id != null">
+                AND id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(name,#{queryDTO.name})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="PlotExcelVO">
+        select
+         id,
+         community_id,
+         name,
+         remark,
+         create_time,
+         update_time
+        from e_plot
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from e_plot where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from e_plot where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getAll" resultMap="PlotVO">
+        select
+        ep.id,
+        ep.community_id,
+        ec.name communityName,
+        ep.name,
+        ep.remark,
+        ep.create_time,
+        ep.update_time
+        from e_plot ep
+        left join e_community ec on ep.community_id = ec.id
+        order by ec.name,ep.name
+    </select>
+
+</mapper>

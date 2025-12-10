@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.system.user.dao.UserDao">
+
+    <resultMap id="UserVO" type="net.lab1024.smartadmin.module.system.user.domain.vo.UserVO"></resultMap>
+    <resultMap id="UserExcelVO" type="net.lab1024.smartadmin.module.system.user.domain.vo.UserExcelVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="UserVO">
+        select
+          id,
+          login_name,
+          login_pwd,
+          actual_name,
+          nick_name,
+          phone,
+          id_card,
+          birthday,
+          email,
+          department_id,
+          is_leave,
+          is_disabled,
+          remark,
+          create_user,
+          update_time,
+          create_time,
+          is_delete,
+          identity
+        from t_user
+        <where>
+            <if test="queryDTO.loginName != null and queryDTO.loginName != ''">
+                AND login_name = #{queryDTO.loginName}
+            </if>
+            <if test="queryDTO.loginPwd != null and queryDTO.loginPwd != ''">
+                AND INSTR(login_pwd,#{queryDTO.loginPwd})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExportData" resultMap="UserExcelVO">
+        select
+           id,
+           login_name,
+           login_pwd,
+           actual_name,
+           nick_name,
+           phone,
+           id_card,
+           birthday,
+           email,
+           department_id,
+           is_leave,
+           is_disabled,
+           remark,
+           create_user,
+           update_time,
+           create_time,
+           is_delete,
+           identity
+        from t_user
+        <where>
+            <if test="queryDTO.loginName != null and queryDTO.loginName != ''">
+                AND login_name = #{queryDTO.loginName}
+            </if>
+            <if test="queryDTO.loginPwd != null and queryDTO.loginPwd != ''">
+                AND INSTR(login_pwd,#{queryDTO.loginPwd})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="UserExcelVO">
+        select
+         id,
+         login_name,
+         login_pwd,
+         actual_name,
+         nick_name,
+         phone,
+         id_card,
+         birthday,
+         email,
+         department_id,
+         is_leave,
+         is_disabled,
+         remark,
+         create_user,
+         update_time,
+         create_time,
+         is_delete,
+         identity
+        from t_user
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from t_user where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from t_user where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

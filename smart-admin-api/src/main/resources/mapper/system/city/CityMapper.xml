@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.system.city.dao.CityDao">
+
+    <resultMap id="CityVO" type="net.lab1024.smartadmin.module.system.city.domain.vo.CityVO"></resultMap>
+    <resultMap id="CityExcelVO" type="net.lab1024.smartadmin.module.system.city.domain.vo.CityExcelVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="CityVO">
+        select
+          id,
+          name,
+          remark,
+          province_id
+        from vis_city
+        <where>
+            <if test="queryDTO.id != null">
+                AND id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(name,#{queryDTO.name})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExportData" resultMap="CityExcelVO">
+        select
+           id,
+           name,
+           remark,
+           province_id
+        from vis_city
+        <where>
+            <if test="queryDTO.id != null">
+                AND id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(name,#{queryDTO.name})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="CityExcelVO">
+        select
+         id,
+         name,
+         remark,
+         province_id
+        from vis_city
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from vis_city where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from vis_city where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getAll" resultMap="CityVO">
+        select
+        id,
+        name,
+        remark,
+        province_id
+        from vis_city
+        where province_id = #{provinceId}
+    </select>
+
+    <select id="selectAll" resultMap="CityVO">
+        select
+        id,
+        name,
+        remark,
+        province_id
+        from vis_city
+        order by province_id asc
+    </select>
+
+</mapper>

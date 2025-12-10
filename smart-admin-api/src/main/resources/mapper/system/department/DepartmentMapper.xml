@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.system.department.DepartmentDao">
+
+
+    <resultMap id="DepartmentVO"
+               type="net.lab1024.smartadmin.module.system.department.domain.dto.DepartmentVO"></resultMap>
+
+
+    <sql id="baseSql">
+        d.id,
+        d.name,
+        d.short_name,
+        d.manager_id,
+        d.parent_id,
+        d.sort,
+        d.code,
+        d.eng_name,
+        d.update_time,
+        d.create_time
+    </sql>
+
+    <select id="listAll" resultMap="DepartmentVO">
+        SELECT
+        <include refid="baseSql"></include>,
+        e.actual_name as managerName,
+        pd.`name` as parentName
+        FROM
+        t_department d
+        left join t_employee e on d.manager_id= e.id
+        left join t_department pd on d.parent_id = pd.id
+        order by code asc
+    </select>
+
+    <select id="selectByParentId" resultMap="DepartmentVO">
+        SELECT
+        <include refid="baseSql"></include>
+        FROM
+        t_department d
+        where
+        d.parent_id = #{departmentId}
+        order by sort desc
+    </select>
+
+
+    <select id="countSubDepartment" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        t_department
+        WHERE
+        parent_id = #{deptId}
+    </select>
+
+
+
+    <resultMap id="DepartmentExcelVO" type="net.lab1024.smartadmin.module.system.department.domain.dto.DepartmentExcelVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="DepartmentVO">
+        select
+        d.id,
+        d.name,
+        d.short_name,
+        d.parent_id,
+        d.sort,
+        d.update_time,
+        d.create_time,
+        d.code,
+        d.eng_name,
+        e.actual_name AS managerName
+        FROM t_department d
+        LEFT JOIN t_employee e ON d.manager_id=e.id
+        <where>
+            <if test="queryDTO.id != null">
+                AND d.id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(d.name,#{queryDTO.name})
+            </if>
+            <if test="queryDTO.shortName != null and queryDTO.shortName != ''">
+                AND INSTR(d.short_name,#{queryDTO.shortName})
+            </if>
+            <if test="queryDTO.managerId != null">
+                AND d.manager_id = #{queryDTO.managerId}
+            </if>
+            <if test="queryDTO.code != null and queryDTO.code != ''">
+                AND d.code = #{queryDTO.code}
+            </if>
+            <if test="queryDTO.engname != null and queryDTO.engname != ''">
+                AND INSTR(d.engName,#{queryDTO.engname})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND d.create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND d.create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND d.update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND d.update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+        order by d.code asc
+    </select>
+
+    <select id="queryAllExportData" resultMap="DepartmentExcelVO">
+        select
+        id,
+        name,
+        short_name,
+        manager_id,
+        parent_id,
+        sort,
+        update_time,
+        create_time,
+        code,
+        eng_name
+        from t_department
+        <where>
+            <if test="queryDTO.id != null">
+                AND id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.name != null and queryDTO.name != ''">
+                AND INSTR(name,#{queryDTO.name})
+            </if>
+            <if test="queryDTO.shortName != null and queryDTO.shortName != ''">
+                AND INSTR(short_name,#{queryDTO.shortName})
+            </if>
+            <if test="queryDTO.managerId != null">
+                AND manager_id = #{queryDTO.managerId}
+            </if>
+            <if test="queryDTO.code != null and queryDTO.code != ''">
+                AND code = #{queryDTO.code}
+            </if>
+            <if test="queryDTO.engname != null and queryDTO.engname != ''">
+                AND INSTR(engName,#{queryDTO.engname})
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="DepartmentExcelVO">
+        select
+        id,
+        name,
+        short_name,
+        manager_id,
+        parent_id,
+        sort,
+        update_time,
+        create_time,
+        code,
+        eng_name
+        from t_department
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from t_department where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from t_department where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getReviewer" resultType="java.lang.Integer">
+        SELECT
+        r.employee_id
+        FROM vis_department_reviewer r
+        LEFT JOIN t_department d on d.id = r.department_id
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="getDepartmentByDeptName" resultMap="DepartmentVO">
+        SELECT
+        <include refid="baseSql"></include>
+        FROM t_department d
+        WHERE INSTR(d.name,#{departmentName})
+    </select>
+
+    <insert id="insertDepartmentNoAuto">
+        INSERT INTO t_department (
+            id,
+            code,
+            name,
+            eng_name
+        )
+        VALUES
+            (
+              #{id},
+             #{code},
+             #{name},
+             #{engName}
+             )
+    </insert>
+
+</mapper>

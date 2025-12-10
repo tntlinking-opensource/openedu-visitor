@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.smartadmin.module.business.visitorManager.reviewer.dao.ReviewerDao">
+
+    <resultMap id="ReviewerVO" type="net.lab1024.smartadmin.module.business.visitorManager.reviewer.domain.vo.ReviewerVO"></resultMap>
+    <resultMap id="ReviewerExcelVO" type="net.lab1024.smartadmin.module.business.visitorManager.reviewer.domain.vo.ReviewerExcelVO"></resultMap>
+    <resultMap id="EmployeeVO" type="net.lab1024.smartadmin.module.system.employee.domain.vo.EmployeeVO"></resultMap>
+
+
+    <select id="queryByPage" resultMap="ReviewerVO">
+        select
+          r.id,
+          d.name AS departmentName,
+          e.actual_name AS employeeName
+        from vis_department_reviewer r
+        LEFT JOIN t_department d ON r.department_id = d.id
+        LEFT JOIN t_employee e ON r.employee_id = e.id
+        <where>
+            <if test="queryDTO.id != null">
+                AND r.id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.departmentId != null">
+                AND r.department_id = #{queryDTO.departmentId}
+            </if>
+            <if test="queryDTO.employeeId != null">
+                AND r.employee_id = #{queryDTO.employeeId}
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND r.create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND r.create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND r.update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND r.update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExportData" resultMap="ReviewerExcelVO">
+        select
+           id,
+           department_id,
+           employee_id
+        from vis_department_reviewer
+        <where>
+            <if test="queryDTO.id != null">
+                AND id = #{queryDTO.id}
+            </if>
+            <if test="queryDTO.departmentId != null">
+                AND department_id = #{queryDTO.departmentId}
+            </if>
+            <if test="queryDTO.employeeId != null">
+                AND employee_id = #{queryDTO.employeeId}
+            </if>
+
+            <if test="queryDTO.createTimeBegin != null ">
+                AND create_time &gt;= #{queryDTO.createTimeBegin}
+            </if>
+            <if test="queryDTO.createTimeEnd != null ">
+                AND create_time &lt;= #{queryDTO.createTimeEnd}
+            </if>
+
+            <if test="queryDTO.updateTimeBegin != null ">
+                AND update_time &gt;= #{queryDTO.updateTimeBegin}
+            </if>
+            <if test="queryDTO.updateTimeEnd != null ">
+                AND update_time &lt;= #{queryDTO.updateTimeEnd}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryBatchExportData" resultMap="ReviewerExcelVO">
+        select
+         id,
+         department_id,
+         employee_id
+        from vis_department_reviewer
+        where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteById">
+        delete from vis_department_reviewer where id = #{id}
+    </delete>
+
+    <delete id="deleteByIdList">
+        delete from vis_department_reviewer where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="addReviewer">
+        insert into vis_department_reviewer (department_id, employee_id)
+        values
+        <foreach collection="param2" item="id" separator=",">
+            (#{param1},#{id})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByDepartmentId">
+        delete from vis_department_reviewer
+        where department_id=#{id}
+    </delete>
+
+    <select id="getShrByDeptId" resultMap="EmployeeVO">
+        SELECT e.*
+        FROM
+        t_employee e
+        left join vis_department_reviewer dr on dr.employee_id = e.id
+        left join t_department d on dr.department_id = d.id
+        WHERE
+        d.id = #{departmentId}
+        order by e.create_time desc
+    </select>
+
+</mapper>
