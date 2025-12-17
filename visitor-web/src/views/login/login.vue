@@ -5,15 +5,18 @@
 <template>
   <div class="login">
     <div class="content">
-      <!-- <header class="logo center">
-        <img alt
-             src="../../assets/images/login-logo.png" />
-      </header> -->
+      <header class="logo center">
+        <img alt src="../../assets/images/logo2.png" height="50"/>
+      </header>
       <div style="font-size: 30px; text-align: center; line-height: 60px;">校园访客预约</div>
       <div class="form-con">
         <login-form @on-success-valid="handleSubmit"></login-form>
       </div>
       <!-- <footer class="center footerDesc">SmartAdmin 由1024创新实验室强力驱动</footer> -->
+      <div style="text-align: center;font-size: 26px; margin: 50px -50px;">
+        <a href="天天开源软件（社区版）许可协议.pdf" download="天天开源软件（社区版）许可协议.pdf" target="_blank"
+           style="white-space: nowrap;">本系统软件源代码来源于天天开源的许可</a>
+      </div>
     </div>
   </div>
 </template>

@@ -2,8 +2,11 @@
 <template>
   <div style="padding: 0.4rem">
     <van-form @submit="onSubmit">
+      <div style="text-align: center; margin-top: 100px;">
+        <img src="../../assets/logo2.png" height="50"/>
+      </div>
       <van-row type="flex" justify="center">
-        <div style="text-align: center; font-size: 30px; line-height: 100px; letter-spacing: 5px;">访客系统</div>
+        <div style="text-align: center; font-size: 30px; line-height: 80px; letter-spacing: 5px;">访客系统</div>
       </van-row>
       <van-cell-group>
         <van-field
@@ -32,6 +35,11 @@
         游客登录
       </div>
     </van-form>
+
+    <div style="text-align: center; font-size: 20px; color: #fff; margin-top: 60px;">
+      <a href="天天开源软件（社区版）许可协议.pdf" download="天天开源软件（社区版）许可协议.pdf" target="_blank"
+         style="white-space: nowrap;">本系统软件源代码来源于天天开源的许可</a>
+    </div>
   </div>
 </template>
 

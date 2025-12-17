@@ -19,9 +19,9 @@
         ref="sideMenu"
       >
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div :class="{'collapsed':collapsed}" class="logo-con">
-          <!-- <img :src="maxLogo" key="max-logo" v-show="!collapsed" />
-          <img :src="minLogo" key="min-logo" v-show="collapsed" /> -->
+        <div :class="{'collapsed':collapsed}" class="logo-con" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <img :src="maxLogo" key="max-logo" v-show="!collapsed" height="40"/>
+          <img :src="maxLogo" key="min-logo" v-show="collapsed" height="40"/>
           <div v-if="!collapsed" style="color: #fff; text-align: center;">校园访客预约</div>
         </div>
         <div :class="{'collapsed':collapsed}" class="search-bar">
@@ -104,7 +104,7 @@ import { mapMutations, mapActions, mapGetters } from 'vuex';
 import { getNewTagList, routeEqual, getShowMenu } from '@/lib/menu-func';
 import { routers } from '@/router/routers';
 import minLogo from '@/assets/images/logo-min.png';
-import maxLogo from '@/assets/images/logo.png';
+import maxLogo from '@/assets/images/logo1.png';
 import { loginApi } from '@/api/login';
 import './main.less';
 export default {

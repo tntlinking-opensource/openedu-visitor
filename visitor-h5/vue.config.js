@@ -1,10 +1,11 @@
 const path = require('path');
-const CompressionWebpackPlugin = require('compression-webpack-plugin');
-const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-const SentryPlugin = require('@sentry/webpack-plugin');
+// const CompressionWebpackPlugin = require('compression-webpack-plugin');
+// const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+// const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+// const SentryPlugin = require('@sentry/webpack-plugin');
 const resolve = dir => path.join(__dirname, dir);
+
 // 项目配置
 const projectConfig = require('./src/config/index.js');
 
@@ -98,8 +99,33 @@ module.exports = {
       })
       .end();
 
+    // 确保webpack使用浏览器兼容的配置
+    config.target('web');
+
+    // 修复浏览器环境中process对象不可用的问题
+    config.plugin('define').tap(args => {
+      args[0]['process.env'] = JSON.stringify(process.env);
+      args[0]['global'] = 'window';
+      return args;
+    });
+
+    // 配置node选项，让webpack知道这些是Node.js内置模块，提供空对象
+    config.node
+      .set('module', 'empty')
+      .set('fs', 'empty')
+      .set('path', 'empty')
+      .set('os', 'empty')
+      .set('crypto', 'empty')
+      .set('child_process', 'empty');
+
     // ==================== 生产环境配置 begin ====================
     if (isProductionEnv) {
+      const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+      const SentryPlugin = require('@sentry/webpack-plugin');
+      const CompressionWebpackPlugin = require('compression-webpack-plugin');
+
       // 打包分析
       config.plugin('webpack-report').use(BundleAnalyzerPlugin, [
         {
