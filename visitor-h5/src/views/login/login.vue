@@ -37,7 +37,7 @@
     </van-form>
 
     <div style="text-align: center; font-size: 20px; color: #fff; margin-top: 60px;">
-      <a href="天天开源软件（社区版）许可协议.pdf" download="天天开源软件（社区版）许可协议.pdf" target="_blank"
+      <a href="https://open.tntlinking.com/communityTreaty" target="_blank"
          style="white-space: nowrap;">本系统软件源代码来源于天天开源的许可</a>
     </div>
   </div>
