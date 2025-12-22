@@ -13,9 +13,11 @@
         <login-form @on-success-valid="handleSubmit"></login-form>
       </div>
       <!-- <footer class="center footerDesc">SmartAdmin 由1024创新实验室强力驱动</footer> -->
-      <div style="text-align: center;font-size: 26px; margin: 50px -50px;">
-        <a href="天天开源软件（社区版）许可协议.pdf" download="天天开源软件（社区版）许可协议.pdf" target="_blank"
-           style="white-space: nowrap;">本系统软件源代码来源于天天开源的许可</a>
+      <div style="text-align: center;font-size: 18px; margin: 50px -100px;">
+        Copyright © 2025湖北天天数链技术有限公司<br/>
+        本系统软件源代码许可来源于
+        <a href="https://open.tntlinking.com/communityTreaty" target="_blank"
+           style="white-space: nowrap;">《天天开源软件（社区版）许可协议》</a>
       </div>
     </div>
   </div>
