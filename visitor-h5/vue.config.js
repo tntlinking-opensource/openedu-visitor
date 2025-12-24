@@ -112,9 +112,18 @@ module.exports = {
 
     // 修复浏览器环境中process对象不可用的问题
     config.plugin('define').tap(args => {
-      args[0]['process.env'] = JSON.stringify(process.env);
-      args[0]['global'] = 'window';
-      return args;
+      // 只设置必要的环境变量，避免替换整个process.env对象导致的语法错误
+      const envVars = {};
+      for (const key in process.env) {
+        if (process.env.hasOwnProperty(key)) {
+          envVars[`process.env.${key}`] = JSON.stringify(process.env[key]);
+        }
+      }
+      return [{
+        ...args[0],
+        ...envVars,
+        'global': 'window'
+      }];
     });
 
     // 配置node选项，让webpack知道这些是Node.js内置模块，提供空对象
