@@ -124,7 +124,8 @@ module.exports = {
       .set('path', 'empty')
       .set('os', 'empty')
       .set('crypto', 'empty')
-      .set('child_process', 'empty');
+      .set('child_process', 'empty')
+      .set('console', true);
 
     // ==================== 生产环境配置 begin ====================
     if (isProductionEnv) {
