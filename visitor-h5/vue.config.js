@@ -67,6 +67,14 @@ module.exports = {
   },
   configureWebpack: config => {
     config.name = projectConfig.title;
+    
+    // 配置优化选项，暂时禁用Terser压缩，解决打包错误
+    if (process.env.NODE_ENV === 'production') {
+      config.optimization = {
+        ...config.optimization,
+        minimizer: []
+      };
+    }
   },
 
   chainWebpack: config => {
@@ -120,7 +128,7 @@ module.exports = {
 
     // ==================== 生产环境配置 begin ====================
     if (isProductionEnv) {
-      const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+      const TerserWebpackPlugin = require('terser-webpack-plugin');
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
       const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
       const SentryPlugin = require('@sentry/webpack-plugin');
@@ -162,29 +170,30 @@ module.exports = {
           }
         ]);
 
-      // sentry
-      if (isProductionAppEnv) {
-        config.plugin('sentry').use(SentryPlugin, [{
-          ignore: ['node_modules'],
-          include: './dist', // 上传dist文件的js
-          configFile: './.sentryclirc' // 配置文件地址
-        }]);
-      }
+      // sentry - 暂时禁用，解决构建错误
+      // if (isProductionAppEnv) {
+      //   config.plugin('sentry').use(SentryPlugin, [{
+      //     ignore: ['node_modules'],
+      //     include: './dist', // 上传dist文件的js
+      //     configFile: './.sentryclirc' // 配置文件地址
+      //   }]);
+      // }
 
-      config.optimization.minimizer = [
-        new UglifyjsWebpackPlugin({
-          // 生产环境推荐关闭 sourcemap 防止源码泄漏
-          // 服务端通过前端发送的行列，根据 sourcemap 转为源文件位置
-          sourceMap: false,
-          uglifyOptions: {
-            warnings: false,
-            compress: {
-              drop_console: true,
-              drop_debugger: true
-            }
-          }
-        })
-      ];
+      // 暂时移除Terser配置，解决打包错误
+      // config.optimization.minimizer = [
+      //   new TerserWebpackPlugin({
+      //     // 生产环境推荐关闭 sourcemap 防止源码泄漏
+      //     // 服务端通过前端发送的行列，根据 sourcemap 转为源文件位置
+      //     sourceMap: false,
+      //     terserOptions: {
+      //       warnings: false,
+      //       compress: {
+      //         drop_console: true,
+      //         drop_debugger: true
+      //       }
+      //     }
+      //   })
+      // ];
 
       config
         .plugin('ScriptExtHtmlWebpackPlugin')
